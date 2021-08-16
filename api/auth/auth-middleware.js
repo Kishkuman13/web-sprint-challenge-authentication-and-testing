@@ -21,7 +21,7 @@ const checkUserExists = async (req, res, next) => {
   }
   const [user] = await Users.findBy({username: req.body.username})
   if (!user) {
-    next({ status: 422, message: "Invalid credentials" });
+    next({ status: 422, message: "username taken" });
   } else {
     req.user = user;
     next();
