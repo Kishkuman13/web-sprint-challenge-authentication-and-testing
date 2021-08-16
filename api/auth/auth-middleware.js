@@ -2,7 +2,7 @@ const Users = require('../users/users-model');
 
 const checkUser = (req, res, next) => {
   const { username, password } = req.body;
-  if (!username || username === null || !password || password === null) {
+  if (!username || username === null || username === "" || !password || password === null || password === "") {
     res.status(500).json({ message: "username and password required" });
   }
   next();
