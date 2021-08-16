@@ -15,10 +15,6 @@ const checkUser = (req, res, next) => {
 // the response body should include a string exactly as follows: "username taken".
 
 const checkUserExists = async (req, res, next) => {
-  const { username, password } = req.body;
-  if (!username || username === null || username === "" || !password || password === null || password === "") {
-    res.status(500).json({ message: "username and password required" });
-  }
   const [user] = await Users.findBy({username: req.body.username})
   if (!user) {
     res.status(422).json({ message: "username taken" });
