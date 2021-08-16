@@ -2,11 +2,11 @@ const router = require('express').Router();
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const Users = require('../users/users-model');
-const { checkUserExists, checkUser } = require('./auth-middleware');
+const { checkUserExists, checkUser, uniqueName } = require('./auth-middleware');
 const { JWT_SECRET } = require('../secrets');
 
 
-router.post('/register', checkUser, checkUserExists, (req, res, next) => {
+router.post('/register', uniqueName, (req, res, next) => {
   const rounds = process.env.ROUNDS || 8;
   let user = req.body;
   const hash = bcrypt.hashSync(user.password, rounds)
@@ -43,7 +43,7 @@ router.post('/register', checkUser, checkUserExists, (req, res, next) => {
   */
 });
 
-router.post('/login', checkUser, (req, res, next) => {
+router.post('/login', checkUserExists, (req, res, next) => {
   const { password, username } = req.body;
   if (bcrypt.compareSync(password, req.user.password)) {
     const token = makeToken(req.body.user);

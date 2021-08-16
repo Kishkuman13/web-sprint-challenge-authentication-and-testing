@@ -1,11 +1,19 @@
 const Users = require('../users/users-model');
 
-const checkUser = (req, res, next) => {
+const uniqueName = async (req, res, next) => {
   const { username, password } = req.body;
-  if (!username || username === null || username === "" || !password || password === null || password === "") {
+  if (!username || username === null || !password || password === null) {
     res.status(500).json({ message: "username and password required" });
+  } else {
+  const [user] = await Users.findBy({username: req.body.username})
+  if (user) {
+      console.log(user)
+      res.status(422).json({ message: "username taken" });
+    } else {
+      req.user = user;
+      next();
+    }
   }
-  next();
 }
 
 // 3- On FAILED registration due to `username` or `password` missing from the request body,
@@ -16,8 +24,9 @@ const checkUser = (req, res, next) => {
 
 const checkUserExists = async (req, res, next) => {
   const [user] = await Users.findBy({username: req.body.username})
-  if (user) {
-    res.status(422).json({ message: "username taken" });
+  if (!user) {
+    console.log(user)
+    res.status(422).json({ message: "Invalid credentials" });
   } else {
     req.user = user;
     next();
@@ -26,5 +35,5 @@ const checkUserExists = async (req, res, next) => {
 
 module.exports = {
   checkUserExists,
-  checkUser,
-}
+  uniqueName,
+} 
